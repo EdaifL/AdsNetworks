@@ -16,14 +16,12 @@ import org.json.JSONObject;
 public class getAds {
     String Url;
     Context context;
-    public getAds(String url, Context context) {
+
+    public getAds( Context context ,String url) {
+
         Url = url;
         this.context = context;
-
-    }
-
-    public void getFromJson(){
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 JSONObject ads = response.optJSONObject("AdsUnits");
@@ -54,7 +52,7 @@ public class getAds {
                 JsonAds.InterType = AdsSettings.optString("InterType");
                 JsonAds.BannerType = AdsSettings.optString("BannerType");
                 JsonAds.NativeType = AdsSettings.optString("NativeType");
-                JsonAds.IsAdmobON =AdsSettings.optBoolean("IsAdmobON");
+                JsonAds.IsAdmobON = AdsSettings.optBoolean("IsAdmobON");
                 JsonAds.IsFacebookON = AdsSettings.optBoolean("IsFacebookON");
                 JsonAds.IsYandexON = AdsSettings.optBoolean("IsYandexON");
                 JsonAds.IsUnityON = AdsSettings.optBoolean("IsUnityON");
@@ -71,9 +69,9 @@ public class getAds {
                         JsonAds.InterType = "facebook";
                     } else if (JsonAds.IsUnityON) {
                         JsonAds.InterType = "unity";
-                    }  else if (JsonAds.IsAdmobON) {
+                    } else if (JsonAds.IsAdmobON) {
                         JsonAds.InterType = "admob";
-                    }else if (JsonAds.IsApplovin){
+                    } else if (JsonAds.IsApplovin) {
                         JsonAds.InterType = "applovin";
                     }
                 }
@@ -86,7 +84,7 @@ public class getAds {
                         JsonAds.NativeType = "facebook";
                     } else if (JsonAds.IsAdmobON) {
                         JsonAds.NativeType = "admob";
-                    }else if (JsonAds.IsApplovin) {
+                    } else if (JsonAds.IsApplovin) {
                         JsonAds.NativeType = "applovin";
                     }
                 }
@@ -101,7 +99,7 @@ public class getAds {
                         JsonAds.BannerType = "unity";
                     } else if (JsonAds.IsAdmobON) {
                         JsonAds.BannerType = "admob";
-                    } else if(JsonAds.IsApplovin){
+                    } else if (JsonAds.IsApplovin) {
                         JsonAds.BannerType = "applovin";
                     }
 
@@ -109,21 +107,24 @@ public class getAds {
                 //////////////////////////////////////////////////////////////
                 JSONArray GuideArray = response.optJSONArray("Guide");
                 ////////////////////////////////////////////////////////////
-                if (GuideArray != null){
+                if (GuideArray != null) {
                     for (int i = 0; i < GuideArray.length(); i++) {
                         String Title = GuideArray.optJSONObject(i).optString("Title");
                         String Content = GuideArray.optJSONObject(i).optString("Content");
                         String ImgUrl = GuideArray.optJSONObject(i).optString("Img");
-                        JsonGuide.Guide  guide = new JsonGuide.Guide(Title,Content,ImgUrl);
+                        JsonGuide.Guide guide = new JsonGuide.Guide(Title, Content, ImgUrl);
                         JsonGuide.GuideList.add(guide);
 
-                    }}
-                JsonAds.IsAdsOn  =  true;
+                    }
+                }
+                JsonAds.IsAdsOn = true;
             }
-        },  error -> {
-            JsonAds.IsAdsOn  =  false;
+        }, error -> {
+            JsonAds.IsAdsOn = false;
             new AlertDialog.Builder(context).setMessage(error.getMessage()).show();
         });
         Volley.newRequestQueue(context).add(request);
+
     }
+
 }
