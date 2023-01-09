@@ -47,7 +47,7 @@ public class ApplovinAd {
 
     }
     public void OpenApp(){
-        if (!IsOpenshowed){
+        if (!IsOpenshowed && !JsonAds.ApplovinOpenApp.isEmpty()){
             dialog.show();
         appOpenAd = new MaxAppOpenAd( JsonAds.ApplovinOpenApp, context);
         appOpenAd.setListener(new MaxAdListener() {
@@ -96,6 +96,7 @@ public class ApplovinAd {
         appOpenAd.loadAd();
     }}
     public void showBanner(FrameLayout layout){
+        if (!JsonAds.ApplovinBanner.isEmpty()){
         adView = new MaxAdView( JsonAds.ApplovinBanner, context );
         adView.setListener(new MaxAdViewAdListener() {
             @Override
@@ -142,15 +143,16 @@ public class ApplovinAd {
         adView.setLayoutParams( new ViewGroup.LayoutParams( width, heightPx ) );
         adView.setBackgroundColor(Color.WHITE);
         adView.startAutoRefresh();
+         adView.loadAd();
         layout.addView(adView);
 
-        adView.loadAd();
+        }
 
     }
     public void Show_Inter(Intent intent){
+        if (!JsonAds.ApplovinInter.isEmpty()){
         dialog.show();
         interstitialAd =new MaxInterstitialAd(JsonAds.ApplovinInter, context);
-        interstitialAd.loadAd();
         interstitialAd.setListener(new MaxAdListener() {
             @Override
             public void onAdLoaded(MaxAd ad) {
@@ -167,8 +169,6 @@ public class ApplovinAd {
 
                 if (dialog.isShowing()){dialog.dismiss();}
                 context.startActivity(intent);
-                if (adView != null){adView = null;}
-
             }
 
             @Override
@@ -180,48 +180,47 @@ public class ApplovinAd {
             public void onAdLoadFailed(String adUnitId, MaxError error) {
                 if (dialog.isShowing()){dialog.dismiss();}
                 context.startActivity(intent);
-                if (adView != null){adView = null;}
             }
 
             @Override
             public void onAdDisplayFailed(MaxAd ad, MaxError error) {
                 if (dialog.isShowing()){dialog.dismiss();}
                 context.startActivity(intent);
-                if (adView != null){adView = null;}
             }
         });
+            interstitialAd.loadAd();}
+        else {
+            context.startActivity(intent);
+        }
 
     }
     public void Show_Native(FrameLayout layout){
-        nativeAdLoader = new MaxNativeAdLoader( JsonAds.ApplovinNative, context );
-        nativeAdLoader.setNativeAdListener( new MaxNativeAdListener()
-        {
-            @Override
-            public void onNativeAdLoaded(final MaxNativeAdView nativeAdView, final MaxAd ad)
-            {
-                // Clean up any pre-existing native ad to prevent memory leaks.
-                nativeAd = ad;
+        if (!JsonAds.ApplovinNative.isEmpty()) {
+            nativeAdLoader = new MaxNativeAdLoader(JsonAds.ApplovinNative, context);
+            nativeAdLoader.setNativeAdListener(new MaxNativeAdListener() {
+                @Override
+                public void onNativeAdLoaded(final MaxNativeAdView nativeAdView, final MaxAd ad) {
+                    // Clean up any pre-existing native ad to prevent memory leaks.
+                    nativeAd = ad;
 
-                layout.removeAllViews();
-                layout.addView( nativeAdView,new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,900) );
-            }
+                    layout.removeAllViews();
+                    layout.addView(nativeAdView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 900));
+                }
 
-            @Override
-            public void onNativeAdLoadFailed(final String adUnitId, final MaxError error)
-            {
-                // We recommend retrying with exponentially higher delays up to a maximum delay
-            }
+                @Override
+                public void onNativeAdLoadFailed(final String adUnitId, final MaxError error) {
+                    // We recommend retrying with exponentially higher delays up to a maximum delay
+                }
 
-            @Override
-            public void onNativeAdClicked(final MaxAd ad)
-            {
-                // Optional click callback
-            }
-        } );
+                @Override
+                public void onNativeAdClicked(final MaxAd ad) {
+                    // Optional click callback
+                }
+            });
 
-        nativeAdLoader.loadAd();
+            nativeAdLoader.loadAd();
 
-
+        }
     }
 
 }
